@@ -1,0 +1,72 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: No args
+      id: no-args
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: No args
+        setup-command: make
+        command: "./assignment"
+        input: ''
+        expected-output: Incorrect usage. You provided 0 arguments. The correct number
+          of arguments is 2
+        comparison-method: contains
+        timeout: 10
+        max-score: 1
+    - name: One arg
+      id: one-arg
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: One arg
+        setup-command: make
+        command: "./assignment 1"
+        input: ''
+        expected-output: Incorrect usage. You provided 1 arguments. The correct number
+          of arguments is 2
+        comparison-method: contains
+        timeout: 10
+        max-score: 1
+    - name: Three args
+      id: three-args
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Three args
+        setup-command: make
+        command: "./assignment 1 2 3"
+        input: ''
+        expected-output: Incorrect usage. You provided 3 arguments. The correct number
+          of arguments is 2
+        comparison-method: contains
+        timeout: 10
+        max-score: 1
+    - name: Matrix output test
+      id: matrix-output-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Matrix output test
+        setup-command: ''
+        command: make test
+        timeout: 10
+        max-score: 2
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        NO-ARGS_RESULTS: "${{steps.no-args.outputs.result}}"
+        ONE-ARG_RESULTS: "${{steps.one-arg.outputs.result}}"
+        THREE-ARGS_RESULTS: "${{steps.three-args.outputs.result}}"
+        MATRIX-OUTPUT-TEST_RESULTS: "${{steps.matrix-output-test.outputs.result}}"
+      with:
+        runners: no-args,one-arg,three-args,matrix-output-test
