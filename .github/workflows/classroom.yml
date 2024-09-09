@@ -19,7 +19,7 @@ jobs:
       with:
         test-name: No args
         setup-command: make
-        command: "./assignment"
+        command: assignment
         input: ''
         expected-output: Incorrect usage. You provided 0 arguments. The correct number
           of arguments is 2
