@@ -22,9 +22,20 @@ jobs:
         command: make test
         timeout: 10
         max-score: 2
+    - name: No args test
+      id: no-args-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: No args test
+        setup-command: chmod +x checkargs.sh
+        command: ./checkargs "./assignment" "Incorrect usage. You provided 0 arguments.
+          The correct number of arguments is 2"
+        timeout: 10
+        max-score: 1
     - name: Autograding Reporter
       uses: classroom-resources/autograding-grading-reporter@v1
       env:
         MATRIX-OUTPUT-TEST_RESULTS: "${{steps.matrix-output-test.outputs.result}}"
+        NO-ARGS-TEST_RESULTS: "${{steps.no-args-test.outputs.result}}"
       with:
-        runners: matrix-output-test
+        runners: matrix-output-test,no-args-test
