@@ -12,7 +12,7 @@ void freeMatrix(int **matrix, int n) {
     free(matrix);
 }
 
-
+// test comment
 int main(int argc, char *argv[]) {
     // initialize random number generator
     srand(time(NULL));
